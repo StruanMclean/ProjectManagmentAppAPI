@@ -1,0 +1,46 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  TO_COMPLETE
+  WORKING_ON
+  TO_REVIEW
+  FINISHED
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String
+  pfp String @default("")
+  password_hash String
+  salt String
+  groups Group[]
+  Tasks Tasks[]
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  name String
+  user User[]
+  Tasks Tasks[] @relation(name: "GroupToTasks")
+}
+
+model Tasks {
+  id Int @id @default(autoincrement())
+  groupid Int
+  group Group @relation(name: "GroupToTasks", fields: [groupid], references: [id])
+  name String
+  desc String
+  status TaskStatus @default(TO_COMPLETE)
+  to_be_done_by DateTime
+  amount_complete Int @default(0) // 0 to 100
+  users_assigned User[]
+}
