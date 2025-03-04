@@ -15,9 +15,14 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const user = await this.getUser(createUserDto.email);
     if (user.userAlive) {
-      return "User is already alive";
+      return {
+        success: false
+      };
     }
-    return this.create_hash(createUserDto);
+    return {
+      success: true,
+      ...this.create_hash(createUserDto)
+    }
   }
 
   async login(loginUserDto: LoginUserDto, response: any) {
@@ -49,8 +54,8 @@ export class UsersService {
     response.cookie('jwt', token, {
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'strict'
+      sameSite: 'lax',
+      path: '/'
     });
     
     return {

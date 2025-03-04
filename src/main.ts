@@ -10,6 +10,16 @@ async function bootstrap() {
     whitelist: true,
     transform: true,
   }));
+
+  app.enableCors({
+    origin: [
+      'http://127.0.0.1:3000',
+      'http://localhost:3000'
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
   
   app.use(cookieParser());
   

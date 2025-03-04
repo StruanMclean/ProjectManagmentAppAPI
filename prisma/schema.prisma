@@ -1,46 +1,38 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url = env("DATABASE_URL")
-}
-
-enum TaskStatus {
-  TO_COMPLETE
-  WORKING_ON
-  TO_REVIEW
-  FINISHED
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String
-  pfp String @default("")
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
+  name          String
+  pfp           String  @default("")
   password_hash String
-  salt String
-  groups Group[]
-  Tasks Tasks[]
+  salt          String
+  groups        Group[] @relation("GroupToUser")
+  Tasks         Tasks[] @relation("TasksToUser")
 }
 
 model Group {
-  id Int @id @default(autoincrement())
-  name String
-  user User[]
-  Tasks Tasks[] @relation(name: "GroupToTasks")
+  id    Int     @id @default(autoincrement())
+  name  String
+  Tasks Tasks[] @relation("GroupToTasks")
+  user  User[]  @relation("GroupToUser")
 }
 
 model Tasks {
-  id Int @id @default(autoincrement())
-  groupid Int
-  group Group @relation(name: "GroupToTasks", fields: [groupid], references: [id])
-  name String
-  desc String
-  status TaskStatus @default(TO_COMPLETE)
-  to_be_done_by DateTime
-  amount_complete Int @default(0) // 0 to 100
-  users_assigned User[]
+  id              Int      @id @default(autoincrement())
+  groupid         Int
+  name            String
+  desc            String
+  status          String   @default("TO_COMPLETE")
+  to_be_done_by   DateTime
+  amount_complete Int      @default(0)
+  group           Group    @relation("GroupToTasks", fields: [groupid], references: [id])
+  users_assigned  User[]   @relation("TasksToUser")
 }

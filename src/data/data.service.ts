@@ -25,6 +25,11 @@ export class DataService {
                     select: {
                         pfp: true
                     }
+                },
+                Tasks: {
+                    select: {
+                        id: true
+                    }
                 }
             }
         })
@@ -81,6 +86,11 @@ export class DataService {
                 desc: createTaskDto.desc,
                 to_be_done_by: createTaskDto.to_be_done_by,
                 groupid: createTaskDto.group_id,
+                users_assigned: {
+                    connect: {
+                        email: userInfoDto.email
+                    }
+                }
             }
         })
         return data
@@ -91,7 +101,9 @@ export class DataService {
             return {
                 email: value
             }
-          });
+        });
+
+        console.error(updateTasksDto)
 
         const data = await this.prisma.tasks.update({
             where: {
@@ -112,7 +124,7 @@ export class DataService {
                 amount_complete: updateTasksDto.amount_complete,
                 users_assigned: {
                     set: emails
-                }
+                },
             },
         })
 
